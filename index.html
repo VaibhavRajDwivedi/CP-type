@@ -2,11 +2,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>C++ Solve CPM Typing Trainer</title>
+<title>Solvify — C++ Solve Typing Trainer</title>
 <style>
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     font-family: Arial, sans-serif;
@@ -16,9 +14,7 @@ body {
     padding: 20px;
 }
 
-h1 {
-    text-align: center;
-}
+h1 { text-align: center; }
 
 .container {
     max-width: 1000px;
@@ -44,18 +40,13 @@ textarea {
     border-radius: 8px;
 }
 
-label {
-    font-weight: bold;
-}
-
-small {
-    color: #94a3b8;
-}
+label { font-weight: bold; }
+small { color: #94a3b8; }
 </style>
 </head>
 <body>
 
-<h1>C++ Solve CPM Typing Trainer</h1>
+<h1>Solvify — C++ Solve Typing Trainer</h1>
 
 <div class="container">
 
@@ -96,11 +87,9 @@ let sessionActive = false;
 
 const solveBox = document.getElementById("solve");
 
-// Start session automatically on typing
+// ---- Start session automatically ----
 solveBox.addEventListener("input", function() {
-    if (!sessionActive) {
-        startSession();
-    }
+    if (!sessionActive) startSession();
 });
 
 function startSession() {
@@ -115,7 +104,7 @@ function stopSession() {
     startTime = null;
 }
 
-// Update CPM stats
+// ---- Update CPM ----
 function updateStats() {
     if (!sessionActive) return;
 
@@ -123,7 +112,7 @@ function updateStats() {
     document.getElementById("time").innerText = elapsed;
 
     const code = solveBox.value;
-    const filtered = code.replace(/\s/g, '');
+    const filtered = code.replace(/\s/g,'');
     const chars = filtered.length;
     document.getElementById("chars").innerText = chars;
 
@@ -132,10 +121,31 @@ function updateStats() {
         minutes > 0 ? Math.floor(chars / minutes) : 0;
 }
 
-// --- TAB indentation + Ctrl+Enter end session ---
+// ---- Editor Key Handling ----
 solveBox.addEventListener("keydown", function(e) {
 
-    // Tab indentation
+    const pairs = {
+        "(": ")",
+        "{": "}",
+        "[": "]",
+        "\"": "\"",
+        "'": "'"
+    };
+
+    // ---- Auto-close brackets ----
+    if (pairs[e.key]) {
+        e.preventDefault();
+        const start = this.selectionStart;
+        const end = this.selectionEnd;
+        const val = this.value;
+        const closeChar = pairs[e.key];
+
+        this.value = val.substring(0, start) + e.key + closeChar + val.substring(end);
+        this.selectionStart = this.selectionEnd = start + 1;
+        return;
+    }
+
+    // ---- Tab indentation ----
     if (e.key === "Tab") {
         e.preventDefault();
         const start = this.selectionStart;
@@ -151,15 +161,26 @@ solveBox.addEventListener("keydown", function(e) {
                 this.selectionStart = this.selectionEnd = start - 4;
             }
         }
+        return;
     }
 
-    // Ctrl + Enter ends session + clears editor
+    // ---- Skip over auto-inserted closing bracket ----
+    if (")}]\"'".includes(e.key)) {
+        const start = this.selectionStart;
+        const val = this.value;
+        if (val[start] === e.key) {
+            e.preventDefault();
+            this.selectionStart = this.selectionEnd = start + 1;
+        }
+        return;
+    }
+
+    // ---- Shift + Enter ends session ----
     if (e.key === "Enter" && e.shiftKey) {
         e.preventDefault();
-        if (sessionActive) {
-            stopSession();
-        }
-        solveBox.value = "";
+        if (sessionActive) stopSession();
+        this.value = "";
+        return;
     }
 });
 </script>
