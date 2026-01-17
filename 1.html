@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>C++ Solve CPM Typing Trainer</title>
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #0f172a !important;
+    color: #e2e8f0 !important;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+textarea {
+    width: 100%;
+    background: #1e293b !important;
+    color: #f8fafc !important;
+    border: 1px solid #334155 !important;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 14px;
+    resize: vertical;
+}
+
+.stats {
+    margin-top: 15px;
+    background: #1e293b !important;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+label {
+    font-weight: bold;
+}
+
+small {
+    color: #94a3b8;
+}
+</style>
+</head>
+<body>
+
+<h1>C++ Solve CPM Typing Trainer</h1>
+
+<div class="container">
+
+<label>Boilerplate (reference only):</label>
+<textarea rows="8" readonly>
+#include <bits/stdc++.h>
+using namespace std;
+
+void solve() {
+    /* Write code in solve body below */
+}
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    solve();
+}
+</textarea>
+
+<br><br>
+
+<label>Solve() Body:</label>
+<small>Start typing to begin session. Press Shift + Enter to finish.</small>
+<textarea id="solve" rows="12" placeholder="Write only solve() code here..."></textarea>
+
+<div class="stats">
+Time: <span id="time">0</span> sec |
+Chars (no spaces): <span id="chars">0</span> |
+CPM: <span id="cpm">0</span>
+</div>
+
+</div>
+
+<script>
+let startTime = null;
+let timerInterval = null;
+let sessionActive = false;
+
+const solveBox = document.getElementById("solve");
+
+// Start session automatically on typing
+solveBox.addEventListener("input", function() {
+    if (!sessionActive) {
+        startSession();
+    }
+});
+
+function startSession() {
+    sessionActive = true;
+    startTime = Date.now();
+    timerInterval = setInterval(updateStats, 200);
+}
+
+function stopSession() {
+    clearInterval(timerInterval);
+    sessionActive = false;
+    startTime = null;
+}
+
+// Update CPM stats
+function updateStats() {
+    if (!sessionActive) return;
+
+    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById("time").innerText = elapsed;
+
+    const code = solveBox.value;
+    const filtered = code.replace(/\s/g, '');
+    const chars = filtered.length;
+    document.getElementById("chars").innerText = chars;
+
+    const minutes = elapsed / 60;
+    document.getElementById("cpm").innerText =
+        minutes > 0 ? Math.floor(chars / minutes) : 0;
+}
+
+// --- TAB indentation + Ctrl+Enter end session ---
+solveBox.addEventListener("keydown", function(e) {
+
+    // Tab indentation
+    if (e.key === "Tab") {
+        e.preventDefault();
+        const start = this.selectionStart;
+        const end = this.selectionEnd;
+        const val = this.value;
+
+        if (!e.shiftKey) {
+            this.value = val.substring(0, start) + "    " + val.substring(end);
+            this.selectionStart = this.selectionEnd = start + 4;
+        } else {
+            if (val.substring(0, start).endsWith("    ")) {
+                this.value = val.substring(0, start - 4) + val.substring(end);
+                this.selectionStart = this.selectionEnd = start - 4;
+            }
+        }
+    }
+
+    // Ctrl + Enter ends session + clears editor
+    if (e.key === "Enter" && e.shiftKey) {
+        e.preventDefault();
+        if (sessionActive) {
+            stopSession();
+        }
+        solveBox.value = "";
+    }
+});
+</script>
+
+</body>
+</html>
