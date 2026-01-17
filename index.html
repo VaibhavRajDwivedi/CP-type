@@ -69,7 +69,7 @@ int main(){
 <br><br>
 
 <label>Solve() Body:</label>
-<small>Start typing to begin session. Press Shift + Enter to finish.</small>
+<small>Start typing to begin session. Press Alt + Enter to finish.</small>
 <textarea id="solve" rows="12" placeholder="Write only solve() code here..."></textarea>
 
 <div class="stats">
@@ -175,8 +175,8 @@ solveBox.addEventListener("keydown", function(e) {
         return;
     }
 
-    // ---- Shift + Enter ends session ----
-    if (e.key === "Enter" && e.shiftKey) {
+    // ---- Alt + Enter ends session ----
+    if (e.key === "Enter" && e.altKey) {
         e.preventDefault();
         if (sessionActive) stopSession();
         this.value = "";
